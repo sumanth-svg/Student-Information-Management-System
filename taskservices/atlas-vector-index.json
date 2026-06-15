@@ -1,0 +1,15 @@
+{
+  "_comment": "MongoDB Atlas Vector Search index definition for the student_embeddings collection. Create this in Atlas UI: Database > Collections > student_embeddings > Search Indexes > Create Search Index > JSON Editor, with index name matching VECTOR_INDEX in .env (default: student_vector_index). The embedding model Xenova/all-MiniLM-L6-v2 produces 384-dimension vectors and the project normalizes them, so cosine similarity is correct.",
+  "name": "student_vector_index",
+  "type": "vectorSearch",
+  "definition": {
+    "fields": [
+      {
+        "type": "vector",
+        "path": "vector",
+        "numDimensions": 384,
+        "similarity": "cosine"
+      }
+    ]
+  }
+}

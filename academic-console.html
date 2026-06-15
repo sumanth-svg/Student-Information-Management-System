@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Registrar — Academic Intelligence Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     THE EXAMINER'S LEDGER — academic intelligence console
+     Aesthetic: scholastic almanac / examination-hall registrar.
+     Bone parchment ground, ink black optical serif, oxblood accent,
+     ruled gradebook lines, stamp motifs, monospace data columns.
+     ============================================================ */
+
+  :root {
+    --bone:      #f4eee2;   /* parchment ground */
+    --bone-2:    #ece3d2;   /* deeper paper */
+    --ink:       #1a1714;   /* near-black ink */
+    --ink-soft:  #4a443c;   /* faded ink */
+    --ink-faint: #8a8175;   /* marginalia */
+    --oxblood:   #9c2a2a;   /* primary accent — exam-stamp red */
+    --vermilion: #c8421f;   /* hotter accent */
+    --indigo:    #2f3a5c;   /* secondary ink-blue */
+    --rule:      #cbbfa9;   /* ruled line */
+    --rule-soft: #ddd2bd;
+    --gold:      #a8852c;   /* honours gold */
+    --green:     #4d6b3c;   /* pass green */
+    --paper-shadow: 18px 22px 0 rgba(26,23,20,.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bone);
+    color: var(--ink);
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* paper grain + ruled-ledger background */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    background-image:
+      repeating-linear-gradient(180deg,
+        transparent 0, transparent 31px,
+        rgba(156,42,42,.05) 31px, rgba(156,42,42,.05) 32px),
+      radial-gradient(circle at 18% 12%, rgba(156,42,42,.05), transparent 38%),
+      radial-gradient(circle at 86% 78%, rgba(47,58,92,.05), transparent 42%);
+  }
+  /* film grain */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 1; opacity: .5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+  }
+
+  .shell { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; padding: 0 28px 120px; }
+
+  /* margin vertical red line, like a notebook */
+  .shell::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 84px;
+    width: 1px; background: rgba(156,42,42,.22); z-index: 0;
+  }
+  @media (max-width: 760px){ .shell::before { display: none; } }
+
+  /* ---------------- MASTHEAD ---------------- */
+  header.masthead {
+    padding: 46px 0 26px;
+    border-bottom: 3px double var(--ink);
+    position: relative;
+  }
+  .dateline {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--ink-soft); margin-bottom: 18px;
+  }
+  .dateline b { color: var(--oxblood); font-weight: 700; }
+  .masthead h1 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: clamp(48px, 9vw, 116px);
+    line-height: .86;
+    letter-spacing: -.01em;
+    color: var(--ink);
+  }
+  .masthead h1 em {
+    font-style: italic; color: var(--oxblood);
+  }
+  .masthead .sub {
+    margin-top: 16px;
+    display: flex; gap: 22px; flex-wrap: wrap; align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .masthead .sub span { display: inline-flex; gap: 8px; align-items: center; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; box-shadow: 0 0 0 3px rgba(77,107,60,.18); }
+
+  /* rotated confidential stamp */
+  .stamp {
+    position: absolute; top: 38px; right: -6px;
+    transform: rotate(-9deg);
+    border: 2.5px solid var(--oxblood);
+    color: var(--oxblood);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 12px; letter-spacing: .28em;
+    padding: 9px 14px 7px; text-transform: uppercase;
+    opacity: .82; mix-blend-mode: multiply;
+    box-shadow: inset 0 0 0 2px rgba(156,42,42,.18);
+  }
+  .stamp small { display: block; font-size: 8px; letter-spacing: .2em; color: var(--ink-soft); margin-top: 3px; }
+  @media (max-width: 640px){ .stamp { display: none; } }
+
+  /* ---------------- SECTION HEADINGS ---------------- */
+  .sec-head {
+    display: flex; align-items: baseline; gap: 14px;
+    margin: 64px 0 22px;
+  }
+  .sec-head .no {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+    letter-spacing: .2em; color: var(--bone); background: var(--ink);
+    padding: 5px 9px 4px; line-height: 1;
+  }
+  .sec-head h2 {
+    font-family: 'Instrument Serif', serif; font-weight: 400;
+    font-size: clamp(26px, 4vw, 40px); line-height: 1; letter-spacing: -.01em;
+  }
+  .sec-head .flex { flex: 1; height: 1px; background: var(--rule); align-self: center; }
+  .sec-head .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: .18em; text-transform: uppercase; color: var(--ink-faint);
+  }
+
+  /* ---------------- HERO: SEMANTIC QUERY ---------------- */
+  .query-card {
+    margin-top: 30px;
+    background: linear-gradient(180deg, var(--bone-2), #efe6d4);
+    border: 1.5px solid var(--ink);
+    box-shadow: var(--paper-shadow);
+    padding: 34px 34px 30px;
+    position: relative;
+  }
+  .query-card .corner {
+    position: absolute; width: 14px; height: 14px; border: 1.5px solid var(--oxblood);
+  }
+  .query-card .corner.tl { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+  .query-card .corner.tr { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+  .query-card .corner.bl { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+  .query-card .corner.br { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+
+  .query-card .kicker {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: .24em; text-transform: uppercase; color: var(--oxblood);
+    margin-bottom: 10px;
+  }
+  .query-card h3 {
+    font-family: 'Instrument Serif', serif; font-weight: 400;
+    font-size: clamp(28px, 5vw, 46px); line-height: .98; margin-bottom: 22px;
+  }
+  .query-card h3 em { font-style: italic; color: var(--indigo); }
+
+  .query-row { display: flex; gap: 0; border: 1.5px solid var(--ink); background: var(--bone); }
+  .query-row input {
+    flex: 1; border: 0; background: transparent; outline: none;
+    font-family: 'Spectral', serif; font-size: 18px; color: var(--ink);
+    padding: 16px 18px;
+  }
+  .query-row input::placeholder { color: var(--ink-faint); font-style: italic; }
+  .query-row button {
+    border: 0; border-left: 1.5px solid var(--ink);
+    background: var(--ink); color: var(--bone); cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    padding: 0 26px; transition: background .25s, color .25s;
+  }
+  .query-row button:hover { background: var(--oxblood); }
+  .query-row button:active { transform: translateY(1px); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+  .chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .04em;
+    color: var(--ink-soft); background: transparent;
+    border: 1px solid var(--rule); border-radius: 40px;
+    padding: 7px 13px; cursor: pointer; transition: all .2s;
+  }
+  .chip::before { content: "↳ "; color: var(--oxblood); }
+  .chip:hover { border-color: var(--oxblood); color: var(--oxblood); background: rgba(156,42,42,.05); }
+
+  /* ---------------- RESULTS LEDGER ---------------- */
+  #results { margin-top: 26px; }
+  .result {
+    display: grid; grid-template-columns: 54px 1fr 132px;
+    gap: 18px; align-items: center;
+    padding: 18px 4px; border-bottom: 1px solid var(--rule-soft);
+    opacity: 0; transform: translateY(8px);
+    animation: rise .5s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .result .rank {
+    font-family: 'Instrument Serif', serif; font-size: 38px; color: var(--oxblood);
+    text-align: center; line-height: 1;
+  }
+  .result .who { }
+  .result .who .name { font-family: 'Instrument Serif', serif; font-size: 23px; line-height: 1.05; }
+  .result .who .name b { color: var(--ink); }
+  .result .who .meta {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint);
+    margin-top: 4px;
+  }
+  .result .who .summary { font-size: 14px; color: var(--ink-soft); margin-top: 6px; max-width: 60ch; }
+  .result .who .summary mark { background: rgba(168,133,44,.28); color: var(--ink); padding: 0 2px; }
+  .sim {
+    font-family: 'JetBrains Mono', monospace; text-align: right;
+  }
+  .sim .pct { font-size: 22px; font-weight: 700; color: var(--indigo); }
+  .sim .bar { height: 5px; background: var(--rule-soft); margin-top: 7px; position: relative; overflow: hidden; }
+  .sim .bar i { position: absolute; inset: 0 100% 0 0; background: var(--indigo); animation: fill .9s ease forwards; }
+  .sim .label { font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-faint); margin-top: 5px; }
+
+  .method-note {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ink-faint); margin-top: 16px;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .method-note b { color: var(--green); }
+
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @keyframes fill { to {} }
+
+  /* ---------------- DOSSIER GRID ---------------- */
+  .dossier-grid {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px;
+  }
+  @media (max-width: 860px){ .dossier-grid { grid-template-columns: 1fr; } }
+
+  .dossier {
+    background: var(--bone-2); border: 1.5px solid var(--ink);
+    box-shadow: var(--paper-shadow); padding: 0; position: relative;
+  }
+  .dossier .head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 22px 24px 18px; border-bottom: 1.5px solid var(--ink);
+    background: var(--ink); color: var(--bone);
+  }
+  .dossier .head .id {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--rule); margin-bottom: 8px;
+  }
+  .dossier .head .name { font-family: 'Instrument Serif', serif; font-size: 34px; line-height: .9; }
+  .dossier .head .dept { font-family:'JetBrains Mono',monospace; font-size: 10.5px; letter-spacing:.14em; text-transform:uppercase; color: var(--rule); margin-top: 9px; }
+  .dossier .head .grade {
+    font-family: 'Instrument Serif', serif; font-size: 52px; line-height: .8;
+    color: var(--vermilion);
+  }
+  .dossier .head .grade small { display:block; font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:.2em; color: var(--rule); text-align:right; }
+
+  .stat-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .stat {
+    padding: 20px 24px; border-bottom: 1px solid var(--rule);
+  }
+  .stat:nth-child(odd) { border-right: 1px solid var(--rule); }
+  .stat .k { font-family:'JetBrains Mono',monospace; font-size: 10px; letter-spacing:.16em; text-transform:uppercase; color: var(--ink-faint); }
+  .stat .v { font-family: 'Instrument Serif', serif; font-size: 40px; line-height: 1; margin-top: 6px; }
+  .stat .v small { font-size: 16px; color: var(--ink-soft); }
+
+  /* attendance ring */
+  .ring-wrap { display: flex; align-items: center; gap: 16px; padding: 20px 24px; border-bottom: 1px solid var(--rule); }
+  .ring { --p: 0; width: 76px; height: 76px; border-radius: 50%; flex-shrink: 0;
+    background: conic-gradient(var(--green) calc(var(--p)*1%), var(--rule-soft) 0);
+    display: grid; place-items: center; position: relative;
+    transition: --p 1s ease;
+  }
+  .ring::after { content:""; position:absolute; inset: 9px; background: var(--bone-2); border-radius:50%; }
+  .ring b { position: relative; z-index:1; font-family:'JetBrains Mono',monospace; font-weight:700; font-size: 16px; }
+  .ring-wrap .lbl .k { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color: var(--ink-faint); }
+  .ring-wrap .lbl .d { font-size: 14px; color: var(--ink-soft); margin-top: 3px; font-style: italic; }
+
+  .subjects { padding: 20px 24px 24px; }
+  .subjects .grp { margin-bottom: 16px; }
+  .subjects .grp:last-child { margin-bottom: 0; }
+  .subjects .grp .glabel {
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.18em;
+    text-transform:uppercase; margin-bottom: 9px; display:flex; align-items:center; gap:8px;
+  }
+  .subjects .grp.strong .glabel { color: var(--green); }
+  .subjects .grp.weak .glabel { color: var(--oxblood); }
+  .pills { display:flex; flex-wrap:wrap; gap:8px; }
+  .pill {
+    font-family:'Spectral',serif; font-size: 14px; padding: 5px 12px;
+    border: 1px solid; border-radius: 2px;
+  }
+  .grp.strong .pill { border-color: rgba(77,107,60,.5); color: var(--green); background: rgba(77,107,60,.07); }
+  .grp.weak .pill { border-color: rgba(156,42,42,.5); color: var(--oxblood); background: rgba(156,42,42,.06); }
+
+  /* subject bar chart card */
+  .barcard { background: var(--bone-2); border:1.5px solid var(--ink); box-shadow: var(--paper-shadow); padding: 0; }
+  .barcard .head { padding: 20px 24px 16px; border-bottom: 1.5px solid var(--ink); }
+  .barcard .head .k { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color: var(--ink-faint); }
+  .barcard .head h4 { font-family:'Instrument Serif',serif; font-weight:400; font-size: 26px; margin-top: 4px; }
+  .bars { padding: 18px 24px 24px; }
+  .bar-line { margin-bottom: 16px; }
+  .bar-line:last-child { margin-bottom: 0; }
+  .bar-line .top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 6px; }
+  .bar-line .top .s { font-family:'Spectral',serif; font-size: 15px; }
+  .bar-line .top .n { font-family:'JetBrains Mono',monospace; font-weight:700; font-size: 13px; }
+  .bar-line .track { height: 9px; background: var(--bone); border: 1px solid var(--rule); position: relative; }
+  .bar-line .track i { position:absolute; inset:0 100% 0 0; background: repeating-linear-gradient(45deg, var(--indigo), var(--indigo) 6px, #3a466a 6px, #3a466a 12px); transition: inset 1s cubic-bezier(.2,.8,.2,1); }
+  .bar-line.low .track i { background: repeating-linear-gradient(45deg, var(--oxblood), var(--oxblood) 6px, #b03636 6px, #b03636 12px); }
+
+  /* ---------------- LOG TICKER ---------------- */
+  .logs { border: 1.5px solid var(--ink); background: var(--ink); color: var(--bone); }
+  .logs .lhead { display:flex; justify-content:space-between; padding: 14px 22px; border-bottom: 1px solid #3a342c; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color: var(--rule); }
+  .logline {
+    display:grid; grid-template-columns: 140px 170px 1fr; gap: 16px;
+    padding: 12px 22px; border-bottom: 1px solid #2a251f;
+    font-family:'JetBrains Mono',monospace; font-size: 12px; align-items:center;
+  }
+  .logline:last-child { border-bottom: 0; }
+  .logline .t { color: var(--ink-faint); font-size: 10.5px; }
+  .logline .ev { font-weight:700; letter-spacing:.08em; }
+  .logline .ev.marks { color: #e0a94a; }
+  .logline .ev.att { color: #6fae5a; }
+  .logline .ev.ana { color: #7d92c8; }
+  .logline .ev.emb { color: #cf6a4a; }
+  .logline .d { color: var(--rule); font-family:'Spectral',serif; font-size: 13.5px; }
+
+  /* ---------------- FOOTER ---------------- */
+  footer {
+    margin-top: 70px; padding-top: 22px; border-top: 3px double var(--ink);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap: 12px;
+    font-family:'JetBrains Mono',monospace; font-size: 10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color: var(--ink-faint);
+  }
+  footer b { color: var(--oxblood); }
+
+  /* entrance choreography */
+  .reveal { opacity: 0; transform: translateY(18px); animation: rise .7s cubic-bezier(.2,.8,.2,1) forwards; }
+  .d1 { animation-delay: .05s; } .d2 { animation-delay: .15s; }
+  .d3 { animation-delay: .28s; } .d4 { animation-delay: .42s; }
+  .d5 { animation-delay: .56s; } .d6 { animation-delay: .70s; }
+
+  ::selection { background: var(--oxblood); color: var(--bone); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ===================== MASTHEAD ===================== -->
+  <header class="masthead">
+    <div class="dateline reveal d1">
+      <span>VOL. <b>IV</b> &nbsp;·&nbsp; NO. <b id="issue">137</b> &nbsp;·&nbsp; <span id="today">MICHAELMAS TERM</span></span>
+      <span>MTH · ACADEMIC INTELLIGENCE BUREAU</span>
+    </div>
+    <h1 class="reveal d2">The Examiner&rsquo;s<br><em>Ledger</em></h1>
+    <div class="sub reveal d3">
+      <span><i class="dot"></i> SERVICES NOMINAL</span>
+      <span>POSTGRES&nbsp;:8001</span>
+      <span>MONGO&nbsp;ATLAS</span>
+      <span>VECTOR&nbsp;384-D</span>
+      <span id="cohort">COHORT&nbsp;·&nbsp;6&nbsp;ENROLLED</span>
+    </div>
+    <div class="stamp reveal d3">Confidential<small>Registrar's Eyes Only</small></div>
+  </header>
+
+  <!-- ===================== SEMANTIC QUERY ===================== -->
+  <div class="sec-head reveal d2">
+    <span class="no">01</span>
+    <h2>Query the Cohort</h2>
+    <span class="flex"></span>
+    <span class="tag">semantic · vector similarity</span>
+  </div>
+
+  <div class="query-card reveal d3">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <div class="kicker">Natural-language examination of student standing</div>
+    <h3>Ask in plain words. <em>The vectors answer.</em></h3>
+    <div class="query-row">
+      <input id="q" type="text" placeholder="e.g. students weak in mathematics with poor attendance…" />
+      <button id="go">Examine →</button>
+    </div>
+    <div class="chips" id="chips">
+      <span class="chip">students weak in mathematics</span>
+      <span class="chip">top performing students in semester</span>
+      <span class="chip">students with poor attendance</span>
+      <span class="chip">students performing well in science</span>
+      <span class="chip">students needing improvement</span>
+    </div>
+
+    <div id="results"></div>
+    <div class="method-note" id="method" style="display:none">
+      retrieval method: <b id="method-val">cosine_similarity</b> · ranked by true vector distance, not keywords
+    </div>
+  </div>
+
+  <!-- ===================== FEATURED DOSSIER ===================== -->
+  <div class="sec-head reveal d2">
+    <span class="no">02</span>
+    <h2>Student Dossier</h2>
+    <span class="flex"></span>
+    <span class="tag" id="dossier-tag">subject &amp; record analysis</span>
+  </div>
+
+  <div class="dossier-grid">
+    <!-- left: profile + stats -->
+    <div class="dossier reveal d3">
+      <div class="head">
+        <div>
+          <div class="id" id="d-roll">ROLL NO. CS-2031</div>
+          <div class="name" id="d-name">Asha Rao</div>
+          <div class="dept" id="d-dept">COMPUTER SCIENCE · SEM 03</div>
+        </div>
+        <div class="grade"><span id="d-grade">B+</span><small>STANDING</small></div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <div class="k">Average Marks</div>
+          <div class="v"><span id="d-avg">58.5</span><small>/100</small></div>
+        </div>
+        <div class="stat">
+          <div class="k">Class Rank</div>
+          <div class="v"><span id="d-rank">2</span><small> of <span id="d-total">6</span></small></div>
+        </div>
+      </div>
+
+      <div class="ring-wrap">
+        <div class="ring" id="d-ring"><b id="d-att">75%</b></div>
+        <div class="lbl">
+          <div class="k">Attendance Standing</div>
+          <div class="d" id="d-att-note">Adequate — above the 75% examination threshold.</div>
+        </div>
+      </div>
+
+      <div class="subjects">
+        <div class="grp strong">
+          <div class="glabel">▲ Strong Subjects — commendation</div>
+          <div class="pills" id="d-strong"></div>
+        </div>
+        <div class="grp weak">
+          <div class="glabel">▼ Weak Subjects — remediation advised</div>
+          <div class="pills" id="d-weak"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- right: subject bar chart -->
+    <div class="barcard reveal d4">
+      <div class="head">
+        <div class="k">Examination No. 137 — subject-wise</div>
+        <h4>Marks Profile</h4>
+      </div>
+      <div class="bars" id="d-bars"></div>
+    </div>
+  </div>
+
+  <!-- ===================== PERFORMANCE LOG ===================== -->
+  <div class="sec-head reveal d2">
+    <span class="no">03</span>
+    <h2>Performance Ledger</h2>
+    <span class="flex"></span>
+    <span class="tag">mongo · performance_logs</span>
+  </div>
+
+  <div class="logs reveal d3">
+    <div class="lhead"><span>EVENT JOURNAL — APPEND ONLY</span><span id="log-count">004 ENTRIES</span></div>
+    <div id="log-body"></div>
+  </div>
+
+  <footer class="reveal d2">
+    <span>Compiled by the <b>Academic Intelligence Bureau</b> · MTH Registrar</span>
+    <span>Gateway :8000 → Core :8001 → Task :8002</span>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   Wiring. Talks to the FastAPI gateway when reachable; otherwise
+   renders seeded demo data so the ledger is always presentable.
+   ============================================================ */
+const GATEWAY = "http://localhost:8000/academicservice";
+const TOKEN = localStorage.getItem("Token") || ""; // set after signin
+
+/* ---- seeded cohort (mirrors the real schema shapes) ---- */
+const DEMO_REPORTS = {
+  31: { roll:"CS-2031", name:"Asha Rao", dept:"Computer Science", sem:3, avg:58.5, att:75,
+        rank:2, total:6, strong:["Operating Systems"], weak:["Mathematics"],
+        subjects:[["Mathematics",35],["Operating Systems",82],["Networks",61],["DBMS",56]] },
+  32: { roll:"CS-2032", name:"Vikram Iyer", dept:"Computer Science", sem:3, avg:88.2, att:94,
+        rank:1, total:6, strong:["Mathematics","DBMS"], weak:[],
+        subjects:[["Mathematics",90],["Operating Systems",85],["Networks",88],["DBMS",90]] },
+};
+
+const DEMO_SEARCH = {
+  "students weak in mathematics": { method:"cosine_similarity", students:[
+    { rank:1, name:"Asha Rao", roll:"CS-2031", dept:"Computer Science", sim:0.61,
+      summary:"Average marks 58.5. Weak and needs improvement in <mark>Mathematics</mark>. Subject performance: Mathematics average 35." },
+    { rank:2, name:"Neha Pillai", roll:"CS-2034", dept:"Computer Science", sim:0.47,
+      summary:"Weak and needs improvement in <mark>Mathematics</mark>, Networks. This student has poor and low attendance." },
+  ]},
+  "students with poor attendance": { method:"cosine_similarity", students:[
+    { rank:1, name:"Neha Pillai", roll:"CS-2034", dept:"Computer Science", sim:0.68,
+      summary:"Attendance 54 percent. This student has <mark>poor and low attendance</mark>." },
+    { rank:2, name:"Asha Rao", roll:"CS-2031", dept:"Computer Science", sim:0.33,
+      summary:"Attendance 75 percent. Adequate attendance standing for examination." },
+  ]},
+  "top performing students in semester": { method:"cosine_similarity", students:[
+    { rank:1, name:"Vikram Iyer", roll:"CS-2032", dept:"Computer Science", sim:0.71,
+      summary:"Average marks 88.2. <mark>Performing well</mark> and strong in Mathematics, DBMS. Ranked 1 of 6." },
+    { rank:2, name:"Rhea Menon", roll:"CS-2033", dept:"Computer Science", sim:0.55,
+      summary:"Average marks 79.0. Strong in Networks. Good and regular attendance." },
+  ]},
+  "students performing well in science": { method:"cosine_similarity", students:[
+    { rank:1, name:"Rhea Menon", roll:"CS-2033", dept:"Computer Science", sim:0.58,
+      summary:"<mark>Performing well</mark> and strong in Networks, DBMS. Average marks 79.0." },
+  ]},
+  "students needing improvement": { method:"cosine_similarity", students:[
+    { rank:1, name:"Neha Pillai", roll:"CS-2034", dept:"Computer Science", sim:0.64,
+      summary:"<mark>Needs improvement</mark>. Weak in Mathematics, Networks. Poor and low attendance." },
+    { rank:2, name:"Asha Rao", roll:"CS-2031", dept:"Computer Science", sim:0.42,
+      summary:"<mark>Needs improvement</mark> in Mathematics. Average marks 58.5." },
+  ]},
+};
+
+const DEMO_LOGS = [
+  { t:"14 JUN · 09:42", ev:"ANALYTICS_GENERATED", cls:"ana", d:"Asha Rao · avg 58.5 · rank 2" },
+  { t:"14 JUN · 09:41", ev:"EMBEDDING_REBUILT", cls:"emb", d:"6 dossiers re-vectorised (384-D)" },
+  { t:"13 JUN · 16:20", ev:"MARKS_UPDATE", cls:"marks", d:"CS-2031 · Mathematics · 35/100" },
+  { t:"13 JUN · 16:18", ev:"ATTENDANCE_UPDATE", cls:"att", d:"CS-2031 · OS · 38/40 classes" },
+];
+
+/* ---------- helpers ---------- */
+const $ = (s) => document.querySelector(s);
+const esc = (x) => String(x ?? "");
+
+function gradeFor(avg){
+  if(avg>=85) return "A"; if(avg>=75) return "A−"; if(avg>=65) return "B+";
+  if(avg>=55) return "B"; if(avg>=45) return "C"; return "D";
+}
+
+async function tryGateway(path){
+  try {
+    const r = await fetch(GATEWAY + path, { headers: TOKEN ? { Token: TOKEN } : {} });
+    if(!r.ok) throw 0;
+    const j = await r.json();
+    if(j && j.code && j.code !== 200) throw 0;
+    return j;
+  } catch { return null; }
+}
+
+/* ---------- semantic search ---------- */
+async function runSearch(key){
+  const box = $("#results");
+  box.innerHTML = `<div class="method-note">querying vectors…</div>`;
+  $("#method").style.display = "none";
+
+  let data = await tryGateway("/search/" + encodeURIComponent(key));
+  if(!data){
+    data = DEMO_SEARCH[key.toLowerCase().trim()] || pickClosestDemo(key);
+  }
+  const students = (data && data.students) || [];
+
+  if(!students.length){
+    box.innerHTML = `<div class="method-note">no dossiers cross the similarity threshold for &ldquo;${esc(key)}&rdquo;.</div>`;
+    return;
+  }
+
+  box.innerHTML = students.map((s,i) => {
+    const pct = Math.round((s.sim ?? s.similarity ?? 0) * 100);
+    return `
+    <div class="result" style="animation-delay:${i*0.09}s">
+      <div class="rank">${String(s.rank ?? i+1).padStart(2,"0")}</div>
+      <div class="who">
+        <div class="name"><b>${esc(s.name)}</b></div>
+        <div class="meta">${esc(s.roll || s.rollno || "—")} · ${esc(s.dept || s.department || "—")}</div>
+        <div class="summary">${s.summary || ""}</div>
+      </div>
+      <div class="sim">
+        <div class="pct">${pct}<span style="font-size:13px">%</span></div>
+        <div class="bar"><i style="animation-delay:${i*0.09+0.1}s; --w:${pct}%"></i></div>
+        <div class="label">similarity</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  // animate bars to width
+  box.querySelectorAll(".sim .bar i").forEach((el)=>{
+    const w = el.style.getPropertyValue("--w");
+    requestAnimationFrame(()=> setTimeout(()=> el.style.inset = `0 calc(100% - ${w}) 0 0`, 60));
+  });
+
+  $("#method-val").textContent = (data.method || "cosine_similarity");
+  $("#method").style.display = "flex";
+}
+
+function pickClosestDemo(key){
+  const k = key.toLowerCase();
+  let best = null, score = -1;
+  for(const [q,v] of Object.entries(DEMO_SEARCH)){
+    const overlap = q.split(" ").filter(w => k.includes(w)).length;
+    if(overlap > score){ score = overlap; best = v; }
+  }
+  return best || Object.values(DEMO_SEARCH)[0];
+}
+
+/* ---------- dossier ---------- */
+async function loadDossier(id){
+  let rep = null;
+  const live = await tryGateway("/report/" + id);
+  if(live && live.student){
+    const st = live.student;
+    rep = {
+      roll: st.rollno, name: st.name, dept: st.department, sem: st.semester,
+      avg: live.averagemarks, att: live.attendancepercentage,
+      rank: live.rank, total: live.totalranked,
+      strong: live.strongsubjects || [], weak: live.weaksubjects || [],
+      subjects: (live.subjectperformance||[]).map(p => [p.subject, p.average]),
+    };
+  } else {
+    rep = DEMO_REPORTS[id] || DEMO_REPORTS[31];
+  }
+
+  $("#d-roll").textContent = "ROLL NO. " + esc(rep.roll);
+  $("#d-name").textContent = rep.name;
+  $("#d-dept").textContent = `${esc(rep.dept)} · SEM ${String(rep.sem).padStart(2,"0")}`;
+  $("#d-grade").textContent = gradeFor(rep.avg);
+  $("#d-avg").textContent = rep.avg;
+  $("#d-rank").textContent = rep.rank;
+  $("#d-total").textContent = rep.total;
+  $("#d-att").textContent = Math.round(rep.att) + "%";
+  $("#d-att-note").textContent = rep.att >= 75
+    ? "Adequate — above the 75% examination threshold."
+    : "Deficient — below the 75% threshold. Condonation required.";
+
+  const ring = $("#d-ring");
+  ring.style.setProperty("--p", 0);
+  setTimeout(()=> ring.style.setProperty("--p", rep.att), 120);
+  if(rep.att < 75) ring.style.background = `conic-gradient(var(--oxblood) calc(var(--p)*1%), var(--rule-soft) 0)`;
+
+  $("#d-strong").innerHTML = rep.strong.length
+    ? rep.strong.map(s=>`<span class="pill">${esc(s)}</span>`).join("")
+    : `<span class="pill" style="opacity:.5">none recorded</span>`;
+  $("#d-weak").innerHTML = rep.weak.length
+    ? rep.weak.map(s=>`<span class="pill">${esc(s)}</span>`).join("")
+    : `<span class="pill" style="opacity:.5">none — all subjects clear</span>`;
+
+  const bars = $("#d-bars");
+  bars.innerHTML = rep.subjects.map(([s,n])=>`
+    <div class="bar-line ${n<40?'low':''}">
+      <div class="top"><span class="s">${esc(s)}</span><span class="n">${n}</span></div>
+      <div class="track"><i data-w="${n}"></i></div>
+    </div>`).join("");
+  setTimeout(()=> bars.querySelectorAll(".track i").forEach(el=>{
+    el.style.inset = `0 ${100 - Number(el.dataset.w)}% 0 0`;
+  }), 200);
+}
+
+/* ---------- logs ---------- */
+async function loadLogs(id){
+  let logs = DEMO_LOGS;
+  const live = await tryGateway("/performancelogs/" + id);
+  if(live && Array.isArray(live.logs) && live.logs.length){
+    logs = live.logs.slice(0,8).map(l=>{
+      const map = { MARKS_UPDATE:"marks", ATTENDANCE_UPDATE:"att", ANALYTICS_GENERATED:"ana", EMBEDDING_REBUILT:"emb" };
+      const d = l.details || {};
+      const desc = d.subject ? `${d.subject} · ${d.score ?? d.attendedclasses ?? ""}` : JSON.stringify(d).slice(0,48);
+      return { t: (l.createdat||"").replace("T"," ").slice(5,16), ev:l.eventtype, cls: map[l.eventtype]||"ana", d: desc };
+    });
+  }
+  $("#log-count").textContent = String(logs.length).padStart(3,"0") + " ENTRIES";
+  $("#log-body").innerHTML = logs.map(l=>`
+    <div class="logline">
+      <span class="t">${esc(l.t)}</span>
+      <span class="ev ${l.cls}">${esc(l.ev)}</span>
+      <span class="d">${esc(l.d)}</span>
+    </div>`).join("");
+}
+
+/* ---------- boot ---------- */
+$("#go").addEventListener("click", ()=> runSearch($("#q").value || $("#q").placeholder));
+$("#q").addEventListener("keydown", (e)=> { if(e.key==="Enter") $("#go").click(); });
+$("#chips").addEventListener("click", (e)=>{
+  if(e.target.classList.contains("chip")){
+    $("#q").value = e.target.textContent;
+    runSearch(e.target.textContent);
+  }
+});
+
+const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+const now = new Date();
+$("#today").textContent = `${String(now.getDate()).padStart(2,"0")} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+runSearch("students weak in mathematics");
+loadDossier(31);
+loadLogs(31);
+</script>
+</body>
+</html>

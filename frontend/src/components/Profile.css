@@ -1,0 +1,99 @@
+/* ============================================================
+   Profile — Google Material card
+   ============================================================ */
+
+.profile {
+    padding: 32px 36px 48px;
+    max-width: 880px;
+    margin: 0 auto;
+    color: var(--ink);
+    animation: profIn .5s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes profIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.profile .container {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-1);
+}
+
+/* header band with Google-color wash */
+.profile .container .info {
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: linear-gradient(110deg, #e8f0fe 0%, #f6faff 55%, #e6f4ea 100%);
+    border-bottom: 1px solid var(--line-soft);
+}
+.profile .container .info img {
+    height: 96px;
+    width: 96px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: var(--shadow-1);
+    background: #fff;
+    object-fit: cover;
+    padding: 18px;
+}
+.profile .container .info .info-data {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.profile .container .info .info-data label {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -.3px;
+}
+.profile .container .info .info-data span {
+    font-size: 13px;
+    color: var(--g-blue-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    background: rgba(26,115,232,.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    width: fit-content;
+}
+
+/* details rows */
+.profile .container .details {
+    padding: 12px 32px 28px;
+    display: flex;
+    flex-direction: column;
+}
+.profile .container .details .grid {
+    display: grid;
+    grid-template-columns: 200px auto;
+    padding: 16px 4px;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: center;
+}
+.profile .container .details .grid:last-child { border-bottom: none; }
+.profile .container .details .grid span:first-child {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--ink-faint);
+    font-weight: 700;
+}
+.profile .container .details .grid span:last-child {
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    .profile { padding: 22px 18px 36px; }
+    .profile .container .info { flex-direction: column; text-align: center; gap: 16px; }
+    .profile .container .details .grid { grid-template-columns: 1fr; gap: 4px; }
+}
